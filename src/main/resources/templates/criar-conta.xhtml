@@ -48,11 +48,25 @@
         button:hover {
             background-color: #218838;
         }
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            width: 100px;
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Criar Conta</h1>
-    <form th:action="@{/contas}" method="post">
+    <form th:action="@{/contas/criar}" method="post">
         <label for="titular">Titular:</label>
         <input type="text" id="titular" name="titular" required="required" />
         
@@ -61,5 +75,7 @@
         
         <button type="submit">Criar Conta</button>
     </form>
+
+    <a href="/" class="back-button">Início</a>
 </body>
 </html>

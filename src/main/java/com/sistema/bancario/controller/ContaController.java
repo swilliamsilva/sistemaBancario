@@ -3,7 +3,6 @@ package com.sistema.bancario.controller;
 import com.sistema.bancario.model.Conta;
 import com.sistema.bancario.repository.ContaRepository;
 import com.sistema.bancario.service.ContaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,35 +13,62 @@ import java.util.List;
 @RequestMapping("/contas")
 public class ContaController {
 
-    @Autowired
-    private ContaService contaService;
+    private final ContaService contaService;
+    private final ContaRepository contaRepository;
 
-    @Autowired
-    private ContaRepository contaRepository;
-
-    // Exibir página de listagem de contas
-    @GetMapping
-    public String listarContas(Model model) {
-        List<Conta> contas = contaRepository.findAll();
-        model.addAttribute("contas", contas);
-        return "listar-contas"; // Nome da página Thymeleaf
+    // Injeção via construtor
+    public ContaController(ContaService contaService, ContaRepository contaRepository) {
+        this.contaService = contaService;
+        this.contaRepository = contaRepository;
     }
 
-    // Exibir página de criação de conta
+    /**
+     * Exibe a página de listagem de contas.
+     */
+    
+    @GetMapping
+    public String listarContas(@RequestParam(value = "titular", required = false) String titular, Model model) {
+        List<Conta> contas;
+        if (titular != null && !titular.isEmpty()) {
+            // Busca contas pelo nome do titular
+            contas = contaRepository.findByTitularContainingIgnoreCase(titular);
+            model.addAttribute("mensagem", "Resultados para: " + titular);
+        } else {
+            // Lista todas as contas se o titular não for especificado
+            contas = contaRepository.findAll();
+        }
+        model.addAttribute("contas", contas);
+        model.addAttribute("titular", titular);
+        return "listar-contas";
+    }
+
+    
+    /**
+     * Exibe o formulário para criação de uma nova conta.
+     */
     @GetMapping("/criar")
     public String exibirFormularioCriarConta(Model model) {
         model.addAttribute("conta", new Conta());
         return "criar-conta";
     }
 
-    // Criar conta
+    /**
+     * Cria uma nova conta e redireciona para a listagem de contas.
+     */
     @PostMapping("/criar")
-    public String criarConta(@ModelAttribute Conta conta) {
-        contaRepository.save(conta);
-        return "redirect:/contas"; // Redirecionar para a lista de contas
+    public String criarConta(@ModelAttribute Conta conta, Model model) {
+        try {
+            contaRepository.save(conta);
+            model.addAttribute("mensagem", "Conta criada com sucesso.");
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao criar conta: " + e.getMessage());
+        }
+        return "redirect:/contas";
     }
 
-    // Exibir página de transferência
+    /**
+     * Exibe o formulário para realizar transferências.
+     */
     @GetMapping("/transferir")
     public String exibirFormularioTransferencia(Model model) {
         model.addAttribute("idContaOrigem", null);
@@ -51,9 +77,14 @@ public class ContaController {
         return "transferir";
     }
 
-    // Realizar transferência
+    /**
+     * Realiza uma transferência entre contas.
+     */
     @PostMapping("/transferir")
-    public String transferir(@RequestParam Long idContaOrigem, @RequestParam Long idContaDestino, @RequestParam Double valor, Model model) {
+    public String transferir(@RequestParam Long idContaOrigem,
+                             @RequestParam Long idContaDestino,
+                             @RequestParam Double valor,
+                             Model model) {
         try {
             contaService.transferir(idContaOrigem, idContaDestino, valor);
             model.addAttribute("mensagem", "Transferência realizada com sucesso.");

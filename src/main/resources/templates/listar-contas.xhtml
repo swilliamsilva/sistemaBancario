@@ -14,6 +14,31 @@
             color: #333;
             margin-top: 20px;
         }
+        form {
+            width: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
         table {
             width: 80%;
             margin: 20px auto;
@@ -51,10 +76,33 @@
         a:hover {
             background-color: #218838;
         }
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Listar Contas</h1>
+
+    <!-- Formulário para buscar titular -->
+    <form th:action="@{/contas}" method="get">
+        <input type="text" name="titular" placeholder="Digite o nome do titular" th:value="${titular}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Tabela de resultados -->
     <table>
         <thead>
             <tr>
@@ -71,6 +119,8 @@
             </tr>
         </tbody>
     </table>
+
     <a th:href="@{/contas/criar}">Criar Nova Conta</a>
+    <a th:href="@{ / }" class="back-button">Voltar para o Início</a>
 </body>
 </html>
