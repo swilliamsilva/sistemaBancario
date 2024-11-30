@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sistema Bancário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+        }
+        header h1 {
+            margin: 0;
+        }
+        main {
+            padding: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo ao Sistema Bancário</h1>
+    </header>
+    <main>
+        <h2>Navegue pelo sistema:</h2>
+        <a href="/criar-conta" class="button">Criar Conta</a>
+        <a href="/listar-contas" class="button">Listar Contas</a>
+        <a href="/transferir" class="button">Transferir Valores</a>
+    </main>
+</body>
+</html>

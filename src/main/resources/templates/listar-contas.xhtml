@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>sistemaBancario - Listar Contas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        a {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        a:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listar Contas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titular</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="conta : ${contas}">
+                <td th:text="${conta.id}"></td>
+                <td th:text="${conta.titular}"></td>
+                <td th:text="${conta.saldo}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/contas/criar}">Criar Nova Conta</a>
+</body>
+</html>
