@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <title>sistemaBancario - Transferir Valores</title>
+      
     <link rel="stylesheet" href="/css/global.css">
     <style>
         body {
@@ -51,6 +52,24 @@
         button:hover {
             background-color: #0056b3;
         }
+        .message {
+            width: 50%;
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
         .back-button {
             display: block;
             width: 200px;
@@ -70,17 +89,17 @@
 </head>
 <body>
     <h1>Transferir Valores</h1>
-    <h2>transferir.xhtml</h2>
+     <h2>transferir3.xhtml</h2>
     <form th:action="@{/contas/transferir}" method="post">
         <label for="idContaOrigem">Conta Origem (ID):</label>
         <input type="number" id="idContaOrigem" name="idContaOrigem" required>
-
+        
         <label for="idContaDestino">Conta Destino (ID):</label>
         <input type="number" id="idContaDestino" name="idContaDestino" required>
-
+        
         <label for="valor">Valor:</label>
         <input type="number" id="valor" name="valor" step="0.01" required>
-
+        
         <button type="submit">Transferir</button>
     </form>
 
@@ -89,7 +108,7 @@
     <div class="message error" th:if="${erro}" th:text="${erro}"></div>
 
     <button type="reset" class="button">Cancelar</button>
-
+    
     <!-- Botão para voltar ao início -->
     <a th:href="@{../}" class="back-button">Voltar para o Inicio</a>
 </body>

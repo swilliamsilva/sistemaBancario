@@ -1,54 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>sistemaBancario - Listar Contas</title>
+    <link rel="stylesheet" href="/css/global.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 20px;
-        }
-        form {
-            width: 50%;
-            margin: 20px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
         table {
-            width: 80%;
-            margin: 20px auto;
+            width: 100%;
+            margin-top: 20px;
             border-collapse: collapse;
-            background: #fff;
+            background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         th, td {
             padding: 12px 15px;
-            text-align: left;
             border: 1px solid #ddd;
         }
         th {
@@ -61,32 +26,29 @@
         tr:hover {
             background-color: #f1f1f1;
         }
-        a {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            text-align: center;
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #28a745;
+        .button {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-right: 5px;
+            background-color: #007bff;
             color: white;
+            text-decoration: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
         }
-        a:hover {
-            background-color: #218838;
+        .button:hover {
+            background-color: #0056b3;
         }
         .back-button {
             display: block;
-            width: 200px;
-            margin: 10px auto;
+            width: 100px;
             text-align: center;
-            text-decoration: none;
-            padding: 10px 20px;
+            margin: 20px auto;
+            padding: 10px;
             background-color: #007bff;
             color: white;
+            text-decoration: none;
             border-radius: 5px;
-            font-size: 16px;
         }
         .back-button:hover {
             background-color: #0056b3;
@@ -95,32 +57,35 @@
 </head>
 <body>
     <h1>Listar Contas</h1>
-
-    <!-- Formul�rio para buscar titular -->
-    <form th:action="@{/contas}" method="get">
-        <input type="text" name="titular" placeholder="Digite o nome do titular" th:value="${titular}">
-        <button type="submit">Buscar</button>
-    </form>
+    <h2>listar-contas.xhtml</h2>
 
     <!-- Tabela de resultados -->
     <table>
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Número da Conta</th>
                 <th>Titular</th>
                 <th>Saldo</th>
+                <th>Saldo Especial</th>
+                <th>Situação</th>
+                <th>Data de Abertura</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="conta : ${contas}">
                 <td th:text="${conta.id}"></td>
+                <td th:text="${conta.numeroConta}"></td>
                 <td th:text="${conta.titular}"></td>
                 <td th:text="${conta.saldo}"></td>
+                <td th:text="${conta.saldoEspecial}"></td>
+                <td th:text="${conta.situacaoConta}"></td>
+                <td th:text="${conta.dataAbertura}"></td> <!-- Data de Abertura -->
             </tr>
         </tbody>
     </table>
 
-    <a th:href="@{/contas/criar}">Criar Nova Conta</a>
-    <a th:href="@{ / }" class="back-button">Voltar para o In�cio</a>
+    <a th:href="@{/criar-contas}" class="button">Criar Nova Conta</a>
+    <a href="/" class="back-button">Voltar para o Início</a>
 </body>
 </html>

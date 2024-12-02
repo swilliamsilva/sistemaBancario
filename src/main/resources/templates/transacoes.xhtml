@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <title>Sistema Bancário</title>
+       
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+        }
+        header h1 {
+            margin: 0;
+        }
+        main {
+            padding: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<meta charset="UTF-8">
+<body>
+    <header>
+        <h1>Bem-vindo ao Sistema Bancário</h1>
+         <h2>transacoes.xhml</h2>
+    </header>
+    <main>
+        <h2>Atendimento ao Cliente</h2>
+        <a href="/autorizacao" class="button">Autorizar acesso a conta</a>
+          <a href="/movimentacao" class="button">movimentacao</a>
+        <a href="/extrato" class="button">Extrato por Período</a>
+        <a href="/tipo" class="button">Extrato por Tipo</a>
+        
+        
+      </main>
+</body>
+</html>

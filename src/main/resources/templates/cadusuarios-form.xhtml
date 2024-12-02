@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>sistemaBancario - Formulário de CadUsuarios</title>
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        main {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .back-button {
+            display: block;
+            width: 100px;
+            text-align: center;
+            margin: 10px auto;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Formulário de Cadastro de Usuários</h1>
+        <h2>cadusuarios-form.xhtml</h2>
+    </header>
+    <main>
+        <form th:action="@{/cadusuarios/salvar}" th:object="${cadusuario}" method="post">
+            <label for="contaCliente">Conta do Cliente:</label>
+            <input type="text" id="contaCliente" name="contaCliente" th:value="${cadusuario.contaCliente}" required>
+
+            <label for="nomeCliente">Nome do Cliente:</label>
+            <input type="text" id="nomeCliente" name="nomeCliente" th:value="${cadusuario.nomeCliente}" required>
+
+            <label for="usuario">Usuário:</label>
+            <input type="text" id="usuario" name="usuario" th:value="${cadusuario.usuario}" required>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" th:value="${cadusuario.senha}" required>
+
+            <button type="submit">Salvar</button>
+        </form>
+        <a href="/cadusuarios" class="back-button">Voltar</a>
+    </main>
+</body>
+</html>

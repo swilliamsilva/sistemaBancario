@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>sistemaBancario - Criar Conta</title>
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            width: 100px;
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Criar Conta</h1>
+       <h2>criar-conta3.xhtml</h2>
+    
+    <form th:action="@{/contas/criar}" method="post">
+    <label for="titular">Titular:</label>
+    <input type="text" id="titular" name="titular" required>
+
+    <label for="numeroConta">Número da Conta:</label>
+    <input type="text" id="numeroConta" name="numeroConta" maxlength="8" required>
+
+    <label for="saldo">Saldo Inicial:</label>
+    <input type="number" id="saldo" name="saldo" step="0.01" required>
+
+    <label for="saldoEspecial">Saldo Especial:</label>
+    <input type="number" id="saldoEspecial" name="saldoEspecial" step="0.01">
+
+    <label for="situacaoConta">Situação:</label>
+    <select id="situacaoConta" name="situacaoConta">
+        <option value="Ativa">Ativa</option>
+        <option value="Bloqueada">Bloqueada</option>
+    </select>
+
+    <button type="submit">Criar Conta</button>
+</form>
+    
+    <a href="/" class="back-button">Início</a>
+</body>
+</html>

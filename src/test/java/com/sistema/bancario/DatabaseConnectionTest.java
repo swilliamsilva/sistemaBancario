@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -14,69 +15,107 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class DatabaseConnectionTest {
-	
-	
 
     private static final Logger logger = LogManager.getLogger(DatabaseConnectionTest.class);
 
-   
-    
     @Autowired
     private DataSource dataSource;
 
     @Test
-    public void testDatabaseConnection() {
+    public void testDatabaseConnectionAndTableCreation() {
         try (Connection connection = dataSource.getConnection()) {
-        	logger.info("==================================");
-            logger.info("Conexão estabelecida com sucesso!");
             logger.info("==================================");
+            logger.info("Testando conexão com o banco de dados...");
+            logger.info("==================================");
+
+            if (connection.isValid(2)) {
+                logger.info("Conexão estabelecida com sucesso!");
+            } else {
+                logger.error("Falha ao conectar ao banco de dados!");
+                return;
+            }
 
             DatabaseMetaData metaData = connection.getMetaData();
 
-            // Verifica se a tabela "conta" existe
-            boolean tabelaContaExiste = false;
-            try (ResultSet tables = metaData.getTables(null, null, "conta", null)) {
-                tabelaContaExiste = tables.next();
-            }
+            // Verificar ou criar tabelas
+            checkAndCreateTable(connection, metaData, "cad_usuarios",
+                   
+            "CREATE TABLE cad_usuarios (" +
+            "id SERIAL PRIMARY KEY, " +
+            "conta_cliente VARCHAR(50) NOT NULL UNIQUE, " +
+            "nome_cliente VARCHAR(255) NOT NULL, " +
+            "senha VARCHAR(255) NOT NULL, " +
+            "usuario VARCHAR(50) NOT NULL UNIQUE" +
+        ")");
+            
+            
+            checkAndCreateTable(connection, metaData, "conta",
+                    "CREATE TABLE conta (" +
+                            "id SERIAL PRIMARY KEY, " +
+                            "titular VARCHAR(255) NOT NULL, " +
+                            "numero_conta VARCHAR(8) NOT NULL UNIQUE, " +
+                            "saldo NUMERIC(10, 2) NOT NULL, " +
+                            "saldo_especial NUMERIC(10, 2) DEFAULT 0.0, " +
+                            "situacao_conta VARCHAR(50) DEFAULT 'Ativa', " +
+                            "data_hora_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL" +
+                            ")");
 
-            if (!tabelaContaExiste) {
-            	logger.info("================================================");
-                logger.warn("Tabela 'conta' não encontrada. Criando tabela...");
-                logger.info("================================================");
+      /*      CREATE TABLE conta (
+            	    id SERIAL PRIMARY KEY,
+            	    titular VARCHAR(255) NOT NULL,
+            	    numero_conta VARCHAR(8) NOT NULL UNIQUE,
+            	    saldo NUMERIC(10, 2) DEFAULT 0.00 NOT NULL,
+            	    saldo_especial NUMERIC(10, 2) DEFAULT 0.00 NOT NULL,
+            	    situacao_conta VARCHAR(50) NOT NULL,
+            	    data_hora_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            	);
+*/
+            
+            checkAndCreateTable(connection, metaData, "transacao",
+                    "CREATE TABLE transacao (" +
+                            "id SERIAL PRIMARY KEY, " +
+                            "conta_id BIGINT NOT NULL, " +
+                            "data_hora_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                            "tipo_transacao VARCHAR(10) NOT NULL, " +
+                            "valor NUMERIC(10, 2) NOT NULL, " +
+                            "valor_usado_especial NUMERIC(10, 2) DEFAULT 0.0, " +
+                            "FOREIGN KEY (conta_id) REFERENCES conta(id)" +
+                            ")");
 
-                // Cria a tabela "conta"
-                try (Statement statement = connection.createStatement()) {
-                	String sql = "CREATE TABLE conta ("
-                	           + "id SERIAL PRIMARY KEY, "
-                	           + "titular VARCHAR(255) NOT NULL, "
-                	           + "saldo NUMERIC(10, 2) NOT NULL"
-                	           + ");";
-                	statement.executeUpdate(sql);
-                	logger.info("==================================");
-                    logger.info("Tabela 'conta' criada com sucesso!");
-                    logger.info("==================================");
-                }
-            } else {
-            	logger.info("==================================================");
-                logger.info("Tabela 'conta' já existe. Nenhuma ação necessária.");
-                logger.info("==================================================");
-            }
-
-            // Testa a conexão executando uma simples consulta
+            // Teste de consulta simples
             try (Statement statement = connection.createStatement();
                  ResultSet resultSet = statement.executeQuery("SELECT 1")) {
                 if (resultSet.next()) {
-                	logger.info("======================================");
-                    logger.info("Conexão testada com sucesso! Retorno: " + resultSet.getInt(1));
-                    logger.info("======================================");
+                    logger.info("Conexão testada com sucesso! Retorno: {}", resultSet.getInt(1));
                 }
             }
         } catch (SQLException e) {
-        	logger.info("===========================================");
-            logger.error("Erro ao conectar ao banco de dados: ", e);
-            logger.info("============================================");
+            logger.error("Erro ao conectar ou criar tabelas no banco de dados: ", e);
+        }
+    }
+
+    private void checkAndCreateTable(Connection connection, DatabaseMetaData metaData, String tableName,
+                                     String createTableSQL) {
+        try {
+            logger.info("Verificando existência da tabela: {}", tableName);
+            boolean tableExists;
+            try (ResultSet tables = metaData.getTables(null, null, tableName, null)) {
+                tableExists = tables.next();
+            }
+
+            if (tableExists) {
+                logger.info("Tabela '{}' já existe. Nenhuma ação necessária.", tableName);
+            } else {
+                logger.warn("Tabela '{}' não encontrada. Criando tabela...", tableName);
+                try (Statement statement = connection.createStatement()) {
+                    statement.executeUpdate(createTableSQL);
+                    logger.info("Tabela '{}' criada com sucesso!", tableName);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Erro ao verificar ou criar a tabela '{}': ", tableName, e);
         }
     }
 }
-

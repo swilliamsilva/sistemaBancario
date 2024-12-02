@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema Bancário</title>
+    <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo ao Sistema Bancário</h1>
+        <h2>login.xhtml</h2>
+    </header>
+    <main>
+        <h2>Login</h2>
+        <form th:action="@{/login}" method="post" class="form-container">
+            <div th:if="${error}" class="error-message">
+                <p th:text="${error}"></p>
+            </div>
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" class="button">Entrar</button>
+        </form>
+    </main>
+</body>
+</html>
+

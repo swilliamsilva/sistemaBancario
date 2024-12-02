@@ -6,28 +6,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 public class ContaService {
 
     @Autowired
     private ContaRepository contaRepository;
 
-    @Transactional
-    public void transferir(Long idContaOrigem, Long idContaDestino, Double valor) {
-        Conta contaOrigem = contaRepository.findById(idContaOrigem)
-            .orElseThrow(() -> new RuntimeException("Conta de origem não encontrada: " + idContaOrigem));
-        Conta contaDestino = contaRepository.findById(idContaDestino)
-            .orElseThrow(() -> new RuntimeException("Conta de destino não encontrada: " + idContaDestino));
+    @Transactional(readOnly = true)
+    public Conta buscarContaPorId(Long id) {
+        return contaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
+    }
 
-        if (contaOrigem.getSaldo() < valor) {
-            throw new RuntimeException("Saldo insuficiente na conta de origem: " + idContaOrigem);
+    @Transactional
+    public void creditar(Long idConta, BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor para crédito deve ser positivo.");
         }
 
-        // Atualizar saldos
-        contaOrigem.setSaldo(contaOrigem.getSaldo() - valor);
-        contaDestino.setSaldo(contaDestino.getSaldo() + valor);
+        Conta conta = buscarContaPorId(idConta);
+        conta.setSaldo(conta.getSaldo().add(valor));
+        contaRepository.save(conta);
+    }
 
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
+    @Transactional
+    public void debitar(Long idConta, BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor para débito deve ser positivo.");
+        }
+
+        Conta conta = buscarContaPorId(idConta);
+        BigDecimal saldoRestante = conta.getSaldo().subtract(valor);
+
+        if (saldoRestante.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException("Saldo insuficiente.");
+        }
+
+        conta.setSaldo(saldoRestante);
+        contaRepository.save(conta);
     }
 }

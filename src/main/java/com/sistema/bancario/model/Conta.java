@@ -1,9 +1,10 @@
 package com.sistema.bancario.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 public class Conta {
@@ -12,17 +13,26 @@ public class Conta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String titular;
-    private Double saldo;
 
-    // Construtores, getters e setters
-    public Conta() {}
+    @Column(nullable = false, unique = true)
+    private String numeroConta;
 
-    public Conta(String titular, Double saldo) {
-        this.titular = titular;
-        this.saldo = saldo;
-    }
+    @Column(nullable = false)
+    private BigDecimal saldo;
 
+    @Column(nullable = false)
+    private BigDecimal saldoEspecial;
+
+    @Column(nullable = false)
+    private String situacaoConta;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dataHoraAbertura;
+
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -39,11 +49,43 @@ public class Conta {
         this.titular = titular;
     }
 
-    public Double getSaldo() {
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
+    public void setNumeroConta(String numeroConta) {
+        this.numeroConta = numeroConta;
+    }
+
+    public BigDecimal getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(Double saldo) {
+    public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
+    }
+
+    public BigDecimal getSaldoEspecial() {
+        return saldoEspecial;
+    }
+
+    public void setSaldoEspecial(BigDecimal saldoEspecial) {
+        this.saldoEspecial = saldoEspecial;
+    }
+
+    public String getSituacaoConta() {
+        return situacaoConta;
+    }
+
+    public void setSituacaoConta(String situacaoConta) {
+        this.situacaoConta = situacaoConta;
+    }
+
+    public LocalDateTime getDataHoraAbertura() {
+        return dataHoraAbertura;
+    }
+
+    public void setDataHoraAbertura(LocalDateTime dataHoraAbertura) {
+        this.dataHoraAbertura = dataHoraAbertura;
     }
 }

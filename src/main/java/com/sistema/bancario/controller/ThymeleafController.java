@@ -6,23 +6,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ThymeleafController {
 
-    @GetMapping("/")
-    public String index() {
-        return "index"; // Nome do arquivo da página inicial sem a extensão
+    @GetMapping("/home3") // Rota exclusiva para Thymeleaf
+    public String index3() {
+        return "/index3"; // Duplicar arquivo index3.html
     }
 
-    @GetMapping("/criar-conta")
+    @GetMapping("/criar-conta3") // Rota alterada
     public String criarConta() {
-        return "criar-conta"; // Nome do arquivo sem a extensão
+        return "/criar-conta3"; // Duplicar arquivo criar-conta3.html
     }
 
-    @GetMapping("/listar-contas")
-    public String listarContas() {
-        return "listar-contas"; // Nome do arquivo sem a extensão
+    @GetMapping("/listar-contas3") // Rota alterada
+    public String listarContas3() {
+        return "/listar-contas3"; // Duplicar arquivo listar-contas3.html
     }
-
-    @GetMapping("/transferir")
+    
+    @GetMapping("/transferir3") // Rota alterada
     public String transferir() {
-        return "transferir"; // Nome do arquivo sem a extensão
+        return "/transferir3"; // Duplicar arquivo transferir3.html
     }
 }

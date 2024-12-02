@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <title>Administração de Usuários - Sistema Bancário</title>
+     
+    <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+    <header>
+        <h1>Administração de Usuários</h1>
+    </header>
+    <main>
+        <h2>Gerenciar Usuários</h2>
+        <h2>usuario.xhtml</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Usuário</th>
+                    <th>Função</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="usuario : ${usuarios}">
+                    <td th:text="${usuario.id}"></td>
+                    <td th:text="${usuario.nome}"></td>
+                    <td th:text="${usuario.usuario}"></td>
+                    <td th:text="${usuario.funcao}"></td>
+                    <td>
+                        <a th:href="@{/administracao/usuarios/editar/{id}(id=${usuario.id})}" class="button small">Editar</a>
+                        <a th:href="@{/administracao/usuarios/excluir/{id}(id=${usuario.id})}" class="button small danger" onclick="return confirm('Deseja realmente excluir este usuário?');">Excluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/administracao/usuarios/criar" class="button">Criar Novo Usuário</a>
+        <a href="/" class="button back-button">Voltar ao Início</a>
+    </main>
+</body>
+</html>
