@@ -1,28 +1,27 @@
 package com.sistema.bancario;
 
 import com.sistema.bancario.model.Conta;
-import com.sistema.bancario.service.ContaService;
 import com.sistema.bancario.repository.ContaRepository;
-import com.sistema.bancario.repository.TransacaoRepository;
+import com.sistema.bancario.service.ContaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 class ContaServiceTest {
 
     private ContaRepository contaRepository;
-    private TransacaoRepository transacaoRepository;
     private ContaService contaService;
 
     @BeforeEach
     void setUp() {
         contaRepository = mock(ContaRepository.class);
-        transacaoRepository = mock(TransacaoRepository.class);
-        contaService = new ContaService(contaRepository, transacaoRepository); // Construtor atualizado
+        contaService = new ContaService();
+        contaService.setContaRepository(contaRepository);
     }
 
     @Test
@@ -62,5 +61,35 @@ class ContaServiceTest {
 
         assertEquals(BigDecimal.valueOf(150), conta.getSaldo());
         verify(contaRepository, times(1)).save(conta);
+    }
+
+    @Test
+    void debitar_DeveSubtrairValorDoSaldo() {
+        Conta conta = new Conta();
+        conta.setId(1L);
+        conta.setSaldo(BigDecimal.valueOf(100));
+
+        when(contaRepository.findById(1L)).thenReturn(Optional.of(conta));
+
+        contaService.debitar(1L, BigDecimal.valueOf(50));
+
+        assertEquals(BigDecimal.valueOf(50), conta.getSaldo());
+        verify(contaRepository, times(1)).save(conta);
+    }
+
+    @Test
+    void debitar_DeveLancarExcecaoSeSaldoInsuficiente() {
+        Conta conta = new Conta();
+        conta.setId(1L);
+        conta.setSaldo(BigDecimal.valueOf(50));
+
+        when(contaRepository.findById(1L)).thenReturn(Optional.of(conta));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> 
+            contaService.debitar(1L, BigDecimal.valueOf(100))
+        );
+
+        assertEquals("Saldo insuficiente para realizar o saque.", exception.getMessage());
+        verify(contaRepository, never()).save(any(Conta.class));
     }
 }

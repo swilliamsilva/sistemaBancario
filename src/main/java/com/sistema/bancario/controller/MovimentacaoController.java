@@ -1,5 +1,6 @@
 package com.sistema.bancario.controller;
 
+import com.sistema.bancario.model.Conta;
 import com.sistema.bancario.service.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,22 +26,34 @@ public class MovimentacaoController {
         try {
             switch (tipoTransacao) {
                 case "DEPOSITO":
+                    if (valor == null || valor <= 0) {
+                        throw new IllegalArgumentException("Valor para depósito inválido.");
+                    }
                     contaService.creditar(contaId, BigDecimal.valueOf(valor));
                     model.addAttribute("mensagemSucesso", "Depósito realizado com sucesso!");
                     break;
+
                 case "SAQUE":
+                    if (valor == null || valor <= 0) {
+                        throw new IllegalArgumentException("Valor para saque inválido.");
+                    }
                     contaService.debitar(contaId, BigDecimal.valueOf(valor));
                     model.addAttribute("mensagemSucesso", "Saque realizado com sucesso!");
                     break;
+
                 case "CONSULTAR_SALDO":
                     Conta conta = contaService.buscarContaPorId(contaId);
                     model.addAttribute("mensagemSucesso", "Saldo disponível: R$ " + conta.getSaldo());
                     break;
+
                 default:
                     throw new IllegalArgumentException("Tipo de transação inválido.");
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("mensagemErro", "Erro ao processar a transação: " + e.getMessage());
+            throw e; // Propaga a exceção para permitir o teste correto
+        } catch (Exception e) {
+            model.addAttribute("mensagemErro", "Erro inesperado: " + e.getMessage());
         }
 
         return "transacoes";
