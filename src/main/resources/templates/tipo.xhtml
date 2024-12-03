@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <title>Extrato por Tipo de Transação - Sistema Bancário</title>
     <link rel="stylesheet" href="/css/global.css">
 </head>
 <body>
     <header>
         <h1>Extrato por Tipo de Transação</h1>
-           <h2>tipo.xhtml</h2>
+        <h2>tipo.xhtml</h2>
     </header>
     <main>
         <h2>Selecione o tipo de transação para consulta</h2>
-        <form th:action="@{/extrato/tipo}" method="get" class="form-container">
-            <div class="form-group">
+        <form th:action="@{/extrato/tipo}" method="get">
+            <div>
                 <label for="contaId">Número da Conta:</label>
                 <input type="number" id="contaId" name="contaId" required>
+                <p></p>
             </div>
-            <div class="form-group">
+            <div>
                 <label for="tipoTransacao">Tipo de Transação:</label>
                 <select id="tipoTransacao" name="tipoTransacao" required>
                     <option value="DEPOSITO">Depósito</option>
@@ -25,7 +27,10 @@
                     <option value="TRANSFERENCIA">Transferência</option>
                 </select>
             </div>
-            <button type="submit" class="button">Consultar</button>
+            <p></p>
+            <button type="submit">Consultar</button>
+            <p></p>
+            <a href="/" class="back-button">Início</a>
         </form>
 
         <!-- Tabela de resultados -->
@@ -50,5 +55,9 @@
         </table>
 
         <!-- Mensagem caso não existam resultados -->
-        <div th:if="${extrato == null}" class="info-message">
- 
+        <div th:if="${mensagemErro}" class="info-message">
+            <p th:text="${mensagemErro}"></p>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,25 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <title>Extrato Bancário</title>
     <style>
         body { font-family: Arial, sans-serif; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         table th { background-color: #f4f4f9; }
+        .error-message { color: red; margin: 20px 0; }
     </style>
 </head>
 <body>
+<form th:action="@{/extrato}" method="get">
+    <input type="hidden" name="contaId" value="1" />
+    <button type="submit">Ver Extrato</button>
+</form>
+
     <h1>Extrato Bancário</h1>
-    <h2>Transações</h2>
-    <table>
+
+    <!-- Mensagem de erro -->
+    <div th:if="${mensagemErro}" class="error-message" th:text="${mensagemErro}"></div>
+
+    <!-- Tabela de transações -->
+    <table th:if="${transacoes != null}">
         <thead>
             <tr>
                 <th>Data e Hora</th>
                 <th>Tipo</th>
                 <th>Valor</th>
-                <th>Valor Especial</th>
+                <th>Saldo Restante</th>
             </tr>
         </thead>
         <tbody>
@@ -27,10 +40,11 @@
                 <td th:text="${transacao.dataHoraTransacao}"></td>
                 <td th:text="${transacao.tipoTransacao}"></td>
                 <td th:text="${transacao.valor}"></td>
-                <td th:text="${transacao.valorUsadoEspecial}"></td>
+                <td th:text="${transacao.saldoRestante}"></td>
             </tr>
         </tbody>
     </table>
-    <h2>Total das Transações: R$ <span th:text="${total}"></span></h2>
+
+    <h2>Total: <span th:text="${total}"></span></h2>
 </body>
 </html>

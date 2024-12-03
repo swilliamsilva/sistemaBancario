@@ -25,8 +25,9 @@ public class Conta {
     @Column(nullable = false)
     private BigDecimal saldoEspecial;
 
+    @Enumerated(EnumType.STRING)  // Definindo a enumeração
     @Column(nullable = false)
-    private String situacaoConta;
+    private SituacaoConta situacaoConta = SituacaoConta.ATIVA; // Valor default da conta é "ATIVA"
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -73,11 +74,11 @@ public class Conta {
         this.saldoEspecial = saldoEspecial;
     }
 
-    public String getSituacaoConta() {
+    public SituacaoConta getSituacaoConta() {
         return situacaoConta;
     }
 
-    public void setSituacaoConta(String situacaoConta) {
+    public void setSituacaoConta(SituacaoConta situacaoConta) {
         this.situacaoConta = situacaoConta;
     }
 

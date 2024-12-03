@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+     
     <title>sistemaBancario - Listar Contas</title>
     <link rel="stylesheet" href="/css/global.css">
     <style>
@@ -56,6 +58,14 @@
     </style>
 </head>
 <body>
+<form th:action="@{/listar-contas}" method="get">
+    <input type="hidden" name="contaId" value="1" />
+    <button type="submit">Listar Contas</button>
+</form>
+<div th:if="${mensagemErro}" class="error-message">
+    <p th:text="${mensagemErro}"></p>
+</div>
+
     <h1>Listar Contas</h1>
     <h2>listar-contas.xhtml</h2>
 
@@ -86,6 +96,7 @@
     </table>
 
     <a th:href="@{/criar-contas}" class="button">Criar Nova Conta</a>
-    <a href="/" class="back-button">Voltar para o Início</a>
+    <p></p>
+    <a href="/" class="back-button">Início</a>
 </body>
 </html>
