@@ -51,11 +51,10 @@ public class MovimentacaoController {
             }
         } catch (IllegalArgumentException e) {
             model.addAttribute("mensagemErro", "Erro ao processar a transação: " + e.getMessage());
-            throw e; // Propaga a exceção para permitir o teste correto
         } catch (Exception e) {
             model.addAttribute("mensagemErro", "Erro inesperado: " + e.getMessage());
         }
 
-        return "transacoes";
+        return "movimentacaoDeConta";
     }
 }

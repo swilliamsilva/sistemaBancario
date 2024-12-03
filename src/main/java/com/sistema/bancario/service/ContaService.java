@@ -14,67 +14,69 @@ public class ContaService {
     @Autowired
     private ContaRepository contaRepository;
 
-    // Método para criar uma nova conta com saldo especial
+    // Método para creditar (depositar) valor na conta
     @Transactional
-    public Conta criarConta(String titular, String numeroConta, BigDecimal saldoEspecial) {
-        if (titular == null || titular.trim().isEmpty()) {
-            throw new IllegalArgumentException("O titular não pode ser vazio ou nulo.");
-        }
-        if (numeroConta == null || numeroConta.trim().isEmpty()) {
-            throw new IllegalArgumentException("O número da conta não pode ser vazio ou nulo.");
-        }
-        if (saldoEspecial.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("O saldo especial não pode ser negativo.");
+    public void creditar(Long contaId, BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor de depósito deve ser maior que zero");
         }
 
-        Conta conta = new Conta();
-        conta.setTitular(titular);
-        conta.setNumeroConta(numeroConta);
-        conta.setSaldo(BigDecimal.ZERO); // Saldo inicial da conta é zero
-        conta.setSaldoEspecial(saldoEspecial);
+        try {
+            // Recuperar a conta pelo ID
+            Conta conta = buscarContaPorId(contaId);
 
-        return contaRepository.save(conta);
+            // Adicionar o valor ao saldo da conta
+            conta.setSaldo(conta.getSaldo().add(valor));
+
+            // Salvar a conta com o saldo atualizado no banco de dados
+            contaRepository.save(conta);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao realizar o crédito na conta: " + e.getMessage());
+        }
     }
 
-    // Método para buscar uma conta pelo ID
+    // Método para debitar (sacar) valor da conta
+    @Transactional
+    public void debitar(Long contaId, BigDecimal valor) {
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor de débito deve ser maior que zero");
+        }
+
+        try {
+            // Recuperar a conta pelo ID
+            Conta conta = buscarContaPorId(contaId);
+
+            // Verificar se o saldo é suficiente para o débito
+            if (conta.getSaldo().compareTo(valor) < 0) {
+                throw new IllegalArgumentException("Saldo insuficiente para realizar a transação");
+            }
+
+            // Subtrair o valor do saldo da conta
+            conta.setSaldo(conta.getSaldo().subtract(valor));
+
+            // Salvar a conta com o saldo atualizado no banco de dados
+            contaRepository.save(conta);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao realizar o débito na conta: " + e.getMessage());
+        }
+    }
+
+    // Método para buscar uma conta por ID
     @Transactional(readOnly = true)
     public Conta buscarContaPorId(Long id) {
         return contaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada."));
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
     }
 
-    // Método para adicionar crédito na conta
+    // Método para criar conta
     @Transactional
-    public void creditar(Long contaId, BigDecimal valor) {
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("O valor do crédito deve ser maior que zero.");
-        }
+    public Conta criarConta(String titular, String numeroConta, BigDecimal saldoEspecial) {
+        Conta conta = new Conta();
+        conta.setTitular(titular);
+        conta.setNumeroConta(numeroConta);
+        conta.setSaldo(BigDecimal.ZERO); // Inicializa com saldo zero
+        conta.setSaldoEspecial(saldoEspecial);
 
-        Conta conta = buscarContaPorId(contaId);
-        conta.setSaldo(conta.getSaldo().add(valor));
-        contaRepository.save(conta);
-    }
-
-    // Método para realizar débito na conta
-    @Transactional
-    public void debitar(Long contaId, BigDecimal valor) {
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("O valor do débito deve ser maior que zero.");
-        }
-
-        Conta conta = buscarContaPorId(contaId);
-        BigDecimal saldoRestante = conta.getSaldo().subtract(valor);
-
-        if (saldoRestante.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente para realizar o saque.");
-        }
-
-        conta.setSaldo(saldoRestante);
-        contaRepository.save(conta);
-    }
-
-    // Método para injeção manual do repositório (para uso em testes)
-    public void setContaRepository(ContaRepository contaRepository) {
-        this.contaRepository = contaRepository;
+        return contaRepository.save(conta); // Salva a nova conta no banco de dados
     }
 }

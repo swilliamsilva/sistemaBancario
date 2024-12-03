@@ -1,45 +1,37 @@
 package com.sistema.bancario.controller;
 
 import com.sistema.bancario.model.Transacao;
-import com.sistema.bancario.repository.TransacaoRepository;
+import com.sistema.bancario.service.TransacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
 public class ExtratoController {
 
     @Autowired
-    private TransacaoRepository transacaoRepository;
+    private TransacaoService transacaoService;
 
     @GetMapping("/extrato")
-    public String consultarExtrato(
+    public String gerarExtrato(
             @RequestParam("contaId") Long contaId,
-            @RequestParam("dataInicio") String dataInicio,
-            @RequestParam("dataFim") String dataFim,
+            @RequestParam("inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam("fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
             Model model) {
 
-        try {
-            // Converte as datas recebidas para LocalDateTime
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime inicio = LocalDateTime.parse(dataInicio + " 00:00:00", formatter);
-            LocalDateTime fim = LocalDateTime.parse(dataFim + " 23:59:59", formatter);
+        List<Transacao> transacoes = transacaoService.buscarTransacoesPorPeriodo(contaId, inicio, fim);
+        BigDecimal total = transacaoService.calcularTotalTransacoes(transacoes);
 
-            // Busca transações no repositório
-            List<Transacao> extrato = transacaoRepository.findByContaIdAndDataHoraBetween(contaId, inicio, fim);
+        model.addAttribute("transacoes", transacoes);
+        model.addAttribute("total", total);
 
-            model.addAttribute("extrato", extrato);
-
-        } catch (Exception e) {
-            model.addAttribute("mensagemErro", "Erro ao buscar extrato: " + e.getMessage());
-        }
-
-        return "transacoes"; // Nome da página do Thymeleaf
+        return "extrato"; // Nome do arquivo HTML para exibir o extrato
     }
 }

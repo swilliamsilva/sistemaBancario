@@ -2,60 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Extrato - Sistema Bancário</title>
-    <link rel="stylesheet" href="/css/global.css">
+    <title>Extrato Bancário</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        table th { background-color: #f4f4f9; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Extrato por Período</h1>
-    </header>
-    <main>
-        <h2>Consultar Extrato</h2>
-           <h2>extrato.xhtml</h2>
-        <form th:action="@{/extrato}" method="get" class="form-container">
-            <div class="form-group">
-                <label for="contaId">Número da Conta:</label>
-                <input type="number" id="contaId" name="contaId" required>
-            </div>
-            <div class="form-group">
-                <label for="dataInicio">Data de Início:</label>
-                <input type="date" id="dataInicio" name="dataInicio" required>
-            </div>
-            <div class="form-group">
-                <label for="dataFim">Data de Fim:</label>
-                <input type="date" id="dataFim" name="dataFim" required>
-            </div>
-            <button type="submit" class="button">Consultar</button>
-        </form>
-
-        <!-- Tabela de resultados -->
-        <h2 th:if="${extrato != null}">Resultados</h2>
-        <table th:if="${extrato != null}">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Saldo Usado Especial</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="transacao : ${extrato}">
-                    <td th:text="${#dates.format(transacao.dataHora, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                    <td th:text="${transacao.tipo}"></td>
-                    <td th:text="${transacao.valor}"></td>
-                    <td th:text="${transacao.valorUsadoEspecial}"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Mensagem caso não existam resultados -->
-        <div th:if="${extrato == null || extrato.isEmpty()}" class="info-message">
-            <p>Nenhuma transação encontrada no período informado.</p>
-        </div>
-
-        <!-- Botão para voltar -->
-        <a th:href="@{../}" class="back-button">Voltar</a>
-    </main>
+    <h1>Extrato Bancário</h1>
+    <h2>Transações</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data e Hora</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Valor Especial</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="transacao : ${transacoes}">
+                <td th:text="${transacao.dataHoraTransacao}"></td>
+                <td th:text="${transacao.tipoTransacao}"></td>
+                <td th:text="${transacao.valor}"></td>
+                <td th:text="${transacao.valorUsadoEspecial}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>Total das Transações: R$ <span th:text="${total}"></span></h2>
 </body>
 </html>

@@ -39,50 +39,39 @@ public class DatabaseConnectionTest {
 
             DatabaseMetaData metaData = connection.getMetaData();
 
-            // Verificar ou criar tabelas
+            // Verificar ou criar a tabela "cad_usuarios"
             checkAndCreateTable(connection, metaData, "cad_usuarios",
-                   
-            "CREATE TABLE cad_usuarios (" +
-            "id SERIAL PRIMARY KEY, " +
-            "conta_cliente VARCHAR(50) NOT NULL UNIQUE, " +
-            "nome_cliente VARCHAR(255) NOT NULL, " +
-            "senha VARCHAR(255) NOT NULL, " +
-            "usuario VARCHAR(50) NOT NULL UNIQUE" +
-        ")");
-            
-            
+                    "CREATE TABLE cad_usuarios (" +
+                    "id SERIAL PRIMARY KEY, " +
+                    "conta_cliente VARCHAR(50) NOT NULL UNIQUE, " +
+                    "nome_cliente VARCHAR(255) NOT NULL, " +
+                    "senha VARCHAR(255) NOT NULL, " +
+                    "usuario VARCHAR(50) NOT NULL UNIQUE" +
+                    ")");
+
+            // Verificar ou criar a tabela "conta"
             checkAndCreateTable(connection, metaData, "conta",
                     "CREATE TABLE conta (" +
-                            "id SERIAL PRIMARY KEY, " +
-                            "titular VARCHAR(255) NOT NULL, " +
-                            "numero_conta VARCHAR(8) NOT NULL UNIQUE, " +
-                            "saldo NUMERIC(10, 2) NOT NULL, " +
-                            "saldo_especial NUMERIC(10, 2) DEFAULT 0.0, " +
-                            "situacao_conta VARCHAR(50) DEFAULT 'Ativa', " +
-                            "data_hora_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL" +
-                            ")");
+                    "id SERIAL PRIMARY KEY, " +
+                    "titular VARCHAR(255) NOT NULL, " +
+                    "numero_conta VARCHAR(8) NOT NULL UNIQUE, " +
+                    "saldo NUMERIC(10, 2) NOT NULL, " +
+                    "saldo_especial NUMERIC(10, 2) DEFAULT 0.0, " +
+                    "situacao_conta VARCHAR(50) DEFAULT 'Ativa', " +
+                    "data_hora_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL" +
+                    ")");
 
-      /*      CREATE TABLE conta (
-            	    id SERIAL PRIMARY KEY,
-            	    titular VARCHAR(255) NOT NULL,
-            	    numero_conta VARCHAR(8) NOT NULL UNIQUE,
-            	    saldo NUMERIC(10, 2) DEFAULT 0.00 NOT NULL,
-            	    saldo_especial NUMERIC(10, 2) DEFAULT 0.00 NOT NULL,
-            	    situacao_conta VARCHAR(50) NOT NULL,
-            	    data_hora_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-            	);
-*/
-            
+            // Verificar ou criar a tabela "transacao"
             checkAndCreateTable(connection, metaData, "transacao",
                     "CREATE TABLE transacao (" +
-                            "id SERIAL PRIMARY KEY, " +
-                            "conta_id BIGINT NOT NULL, " +
-                            "data_hora_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                            "tipo_transacao VARCHAR(10) NOT NULL, " +
-                            "valor NUMERIC(10, 2) NOT NULL, " +
-                            "valor_usado_especial NUMERIC(10, 2) DEFAULT 0.0, " +
-                            "FOREIGN KEY (conta_id) REFERENCES conta(id)" +
-                            ")");
+                    "id SERIAL PRIMARY KEY, " +
+                    "conta_id BIGINT NOT NULL, " +
+                    "data_hora_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                    "tipo_transacao VARCHAR(10) NOT NULL, " +
+                    "valor NUMERIC(10, 2) NOT NULL, " +
+                    "valor_usado_especial NUMERIC(10, 2) DEFAULT 0.0, " +
+                    "FOREIGN KEY (conta_id) REFERENCES conta(id)" +
+                    ")");
 
             // Teste de consulta simples
             try (Statement statement = connection.createStatement();

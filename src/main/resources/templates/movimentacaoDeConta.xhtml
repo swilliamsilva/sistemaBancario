@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimentação de Conta</title>
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        main {
+            margin: 50px auto;
+            width: 50%;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Movimentação de Conta</h1>
+    </header>
+    <main>
+        <form th:action="@{/movimentacao}" method="post">
+            <label for="contaId">ID da Conta:</label>
+            <input type="text" id="contaId" name="contaId" placeholder="Digite o ID da conta" required>
+
+            <label for="tipoTransacao">Tipo de Transação:</label>
+            <select id="tipoTransacao" name="tipoTransacao">
+                <option value="DEPOSITO">Depósito</option>
+                <option value="SAQUE">Saque</option>
+                <option value="SAQUE_ESPECIAL">Saque Especial</option>
+                <option value="CONSULTAR_SALDO">Consultar Saldo</option>
+            </select>
+
+            <label for="valor">Valor (se aplicável):</label>
+            <input type="number" id="valor" name="valor" step="0.01" placeholder="Digite o valor">
+
+            <button type="submit">Executar Transação</button>
+            <a href="/transacoes" class="button">Encerrar Transações</a>
+        </form>
+
+        <div th:if="${mensagemSucesso}" class="success-message">
+            <p th:text="${mensagemSucesso}"></p>
+        </div>
+        <div th:if="${mensagemErro}" class="error-message">
+            <p th:text="${mensagemErro}"></p>
+        </div>
+    </main>
+</body>
+</html>

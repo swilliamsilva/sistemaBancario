@@ -12,25 +12,16 @@ public class Transacao {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private Conta conta; // Conta associada à transação
+    @JoinColumn(name = "conta_id", nullable = false)
+    private Conta conta;
 
-    @Column(nullable = false)
-    private String tipo; // Tipo da transação: "Crédito" ou "Débito"
+    private LocalDateTime dataHoraTransacao;
+    private String tipoTransacao;
+    private BigDecimal valor;
+    private BigDecimal valorUsadoEspecial;
 
-    @Column(nullable = false)
-    private BigDecimal valor; // Valor da transação
+    // Getters and setters
 
-    @Column(nullable = false)
-    private BigDecimal valorUsadoEspecial; // Valor usado do saldo especial
-
-    @Column(nullable = false)
-    private LocalDateTime dataHora; // Data e hora da transação
-
-    // Construtores
-    public Transacao() {}
-
-    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -47,12 +38,20 @@ public class Transacao {
         this.conta = conta;
     }
 
-    public String getTipo() {
-        return tipo;
+    public LocalDateTime getDataHoraTransacao() {
+        return dataHoraTransacao;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setDataHoraTransacao(LocalDateTime dataHoraTransacao) {
+        this.dataHoraTransacao = dataHoraTransacao;
+    }
+
+    public String getTipoTransacao() {
+        return tipoTransacao;
+    }
+
+    public void setTipoTransacao(String tipoTransacao) {
+        this.tipoTransacao = tipoTransacao;
     }
 
     public BigDecimal getValor() {
@@ -69,13 +68,5 @@ public class Transacao {
 
     public void setValorUsadoEspecial(BigDecimal valorUsadoEspecial) {
         this.valorUsadoEspecial = valorUsadoEspecial;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
     }
 }

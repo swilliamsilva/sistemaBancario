@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class AutorizacaoController {
 
     @GetMapping("/autorizacao")
-    public String administracao() {
-        return "transacoes"; // Nome do arquivo XHTML sem extensão
+    public String autorizacao() {
+        return "autorizacao"; // Nome do arquivo XHTML sem extensão
     }
 }
