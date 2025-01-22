@@ -16,12 +16,6 @@ public class AppController {
         return "criar-conta"; // Nome do arquivo sem a extensão
     }
 
-    // REMOVER ESTA LINHA:
-    // @GetMapping("/listar-contas") // Página de listar contas
-    // public String listarContas() {
-    //     return "listar-contas"; // Nome do arquivo sem a extensão
-    // }
-
     @GetMapping("/transferir") // Página de transferências
     public String transferir() {
         return "transferir"; // Nome do arquivo sem a extensão

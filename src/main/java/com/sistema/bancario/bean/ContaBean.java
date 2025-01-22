@@ -15,12 +15,12 @@ import java.util.List;
 @ViewScoped
 public class ContaBean implements Serializable {
 
-    private static final long serialVersionUID = 1L; // Identificador único para a classe
+    private static final long serialVersionUID = 1L;
 
     @Inject
     private ContaRepository contaRepository;
 
-    private String titular;
+    private String titular;  // Nome completo do titular
     private BigDecimal saldo;
     private BigDecimal saldoEspecial;
     private Long idContaOrigem;
@@ -29,56 +29,17 @@ public class ContaBean implements Serializable {
 
     // Método para criar conta
     public void criarConta() {
-        // Validação de entrada
         if (titular == null || titular.isEmpty() || saldoEspecial == null || saldoEspecial.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Dados inválidos para criar a conta.");
         }
 
-        // Cria nova conta
         Conta novaConta = new Conta();
         novaConta.setTitular(titular);
-        novaConta.setSaldo(saldo != null ? saldo : BigDecimal.ZERO); // Saldo inicial é opcional, se não for informado será 0
+        novaConta.setSaldo(saldo != null ? saldo : BigDecimal.ZERO);
         novaConta.setSaldoEspecial(saldoEspecial);
-        novaConta.setSituacaoConta(SituacaoConta.ATIVA); // Usando a enum SituacaoConta
+        novaConta.setSituacaoConta(SituacaoConta.ATIVA); 
 
-        // Salva a nova conta no repositório
         contaRepository.save(novaConta);
-    }
-
-    // Método para realizar transferência entre contas
-    public void transferir() {
-        // Validações de entrada
-        if (idContaOrigem == null || idContaDestino == null || valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Dados inválidos para transferência.");
-        }
-
-        // Busca as contas de origem e destino
-        Conta contaOrigem = contaRepository.findById(idContaOrigem)
-            .orElseThrow(() -> new RuntimeException("Conta de origem não encontrada."));
-        Conta contaDestino = contaRepository.findById(idContaDestino)
-            .orElseThrow(() -> new RuntimeException("Conta de destino não encontrada."));
-
-        // Verifica saldo suficiente, considerando o saldo especial
-        BigDecimal saldoTotalOrigem = contaOrigem.getSaldo().add(contaOrigem.getSaldoEspecial());
-        if (saldoTotalOrigem.compareTo(valor) < 0) {
-            throw new RuntimeException("Saldo insuficiente na conta de origem.");
-        }
-
-        // Atualiza os saldos da conta de origem
-        if (contaOrigem.getSaldo().compareTo(valor) >= 0) {
-            contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
-        } else {
-            BigDecimal restante = valor.subtract(contaOrigem.getSaldo());
-            contaOrigem.setSaldo(BigDecimal.ZERO);
-            contaOrigem.setSaldoEspecial(contaOrigem.getSaldoEspecial().subtract(restante));
-        }
-
-        // Atualiza o saldo da conta de destino
-        contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
-
-        // Salva as alterações no banco de dados
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
     }
 
     // Método para listar todas as contas

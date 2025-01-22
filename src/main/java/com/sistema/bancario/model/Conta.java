@@ -14,7 +14,7 @@ public class Conta {
     private Long id;
 
     @Column(nullable = false)
-    private String titular;
+    private String titular; // Nome completo do titular
 
     @Column(nullable = false, unique = true)
     private String numeroConta;
@@ -25,7 +25,10 @@ public class Conta {
     @Column(nullable = false)
     private BigDecimal saldoEspecial;
 
-    @Enumerated(EnumType.STRING)  // Definindo a enumeração
+    @Column(nullable = false)
+    private BigDecimal limiteEspecial;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SituacaoConta situacaoConta = SituacaoConta.ATIVA; // Valor default da conta é "ATIVA"
 
@@ -72,6 +75,14 @@ public class Conta {
 
     public void setSaldoEspecial(BigDecimal saldoEspecial) {
         this.saldoEspecial = saldoEspecial;
+    }
+
+    public BigDecimal getLimiteEspecial() {
+        return limiteEspecial;
+    }
+
+    public void setLimiteEspecial(BigDecimal limiteEspecial) {
+        this.limiteEspecial = limiteEspecial;
     }
 
     public SituacaoConta getSituacaoConta() {

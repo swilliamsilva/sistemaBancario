@@ -30,4 +30,8 @@ public class TransacaoService {
                 .map(Transacao::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public List<Transacao> buscarTransacoesPorTipo(Long contaId, String tipoTransacao) {
+        return transacaoRepository.findByContaIdAndTipoTransacao(contaId, tipoTransacao);
+    }
 }

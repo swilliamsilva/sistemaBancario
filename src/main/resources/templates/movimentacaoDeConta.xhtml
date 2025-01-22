@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Movimentação de Conta</title>
@@ -45,6 +46,7 @@
             border-radius: 5px;
             cursor: pointer;
             margin-right: 10px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #0056b3;
@@ -65,30 +67,60 @@
             border-radius: 5px;
             margin-bottom: 20px;
         }
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tipoTransacao = document.getElementById('tipoTransacao');
+            var valorInput = document.getElementById('valor');
+            
+            function toggleValor() {
+                if (tipoTransacao.value === 'CONSULTAR_SALDO') {
+                    valorInput.disabled = true;
+                    valorInput.value = '';
+                } else {
+                    valorInput.disabled = false;
+                }
+            }
+
+            tipoTransacao.addEventListener('change', toggleValor);
+            toggleValor(); // inicializar estado
+        });
+    </script>
 </head>
 <body>
-    <header>
-        <h1>Movimentação de Conta</h1>
-    </header>
+    <h1>Bem-vindo ao Sistema Bancário</h1>
+    <h2>Administração - Gerente Agência</h2>
     <main>
         <form th:action="@{/movimentacao}" method="post">
-            <label for="contaId">ID da Conta:</label>
-            <input type="text" id="contaId" name="contaId" placeholder="Digite o ID da conta" required>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <label for="titular">Titular:</label>
+            <input type="text" id="titular" name="titular" required>
+
+            <label for="numeroConta">Número da Conta:</label>
+            <input type="text" id="numeroConta" name="numeroConta" maxlength="8" required>
 
             <label for="tipoTransacao">Tipo de Transação:</label>
             <select id="tipoTransacao" name="tipoTransacao">
                 <option value="DEPOSITO">Depósito</option>
                 <option value="SAQUE">Saque</option>
-                <option value="SAQUE_ESPECIAL">Saque Especial</option>
                 <option value="CONSULTAR_SALDO">Consultar Saldo</option>
             </select>
 
             <label for="valor">Valor (se aplicável):</label>
             <input type="number" id="valor" name="valor" step="0.01" placeholder="Digite o valor">
 
-            <button type="submit">Executar Transação</button>
-            <a href="/transacoes" class="button">Encerrar Transações</a>
+            <button type="submit">Confirmar Transação</button>
         </form>
 
         <div th:if="${mensagemSucesso}" class="success-message">
@@ -97,6 +129,8 @@
         <div th:if="${mensagemErro}" class="error-message">
             <p th:text="${mensagemErro}"></p>
         </div>
+        <p></p>
+        <a href="/menucontas" class="back-button">Voltar ao Menu de Contas</a>
     </main>
 </body>
 </html>

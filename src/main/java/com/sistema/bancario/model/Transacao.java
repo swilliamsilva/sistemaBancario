@@ -11,23 +11,23 @@ public class Transacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Relacionamento com Conta
     @ManyToOne
     @JoinColumn(name = "conta_id", nullable = false)
     private Conta conta;
 
-    private LocalDateTime dataHoraTransacao;
     private String tipoTransacao;
+
     private BigDecimal valor;
+
+    private LocalDateTime dataHoraTransacao;
+
     private BigDecimal valorUsadoEspecial;
 
-    // Getters and setters
+    // Getters e Setters
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Conta getConta() {
@@ -36,14 +36,6 @@ public class Transacao {
 
     public void setConta(Conta conta) {
         this.conta = conta;
-    }
-
-    public LocalDateTime getDataHoraTransacao() {
-        return dataHoraTransacao;
-    }
-
-    public void setDataHoraTransacao(LocalDateTime dataHoraTransacao) {
-        this.dataHoraTransacao = dataHoraTransacao;
     }
 
     public String getTipoTransacao() {
@@ -60,6 +52,14 @@ public class Transacao {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public LocalDateTime getDataHoraTransacao() {
+        return dataHoraTransacao;
+    }
+
+    public void setDataHoraTransacao(LocalDateTime dataHoraTransacao) {
+        this.dataHoraTransacao = dataHoraTransacao;
     }
 
     public BigDecimal getValorUsadoEspecial() {

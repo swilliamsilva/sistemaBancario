@@ -2,45 +2,40 @@ package com.sistema.bancario.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
-    @Profile("prod") // Ativado somente no ambiente de produção
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .antMatchers("/", "/css/**", "/js/**", "/imagens/**").permitAll()
-                .antMatchers("/administracao/**").hasRole("ADMIN")
-                .antMatchers("/", "/home", "/criar-contas", "/listar-contas", "/transferir").permitAll()
+            .authorizeHttpRequests(authz -> authz
+                .antMatchers("/login", "/home", "/criar-conta", "/contas/criar").permitAll()
                 .anyRequest().authenticated()
-                .and()
-            .formLogin()
+            )
+            .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/administracao")
+                .defaultSuccessUrl("/administracao", true)
                 .permitAll()
-                .and()
-            .logout()
-                .logoutSuccessUrl("/login")
-                .permitAll();
+            )
+            .logout(logout -> logout
+                .permitAll()
+            );
+
         return http.build();
     }
 
     @Bean
-    @Profile({"dev", "test"}) // Permite apenas nos perfis dev e test
-    public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            .anyRequest().permitAll() // Permite todas as requisições
-            .and().csrf().disable(); // Desativa o CSRF
-        return http.build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
-
-
-
-    
 }
 

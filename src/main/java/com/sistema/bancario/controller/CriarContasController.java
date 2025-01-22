@@ -6,8 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class CriarContasController {
 
-    @GetMapping("/criar-contas")
-    public String criarContas() {
-           return "criar-contas";
+    // REMOVER ESTE MÉTODO para evitar redundância
+    // @GetMapping("/criar-contas")
+    // public String criarContas() {
+    //     return "criar-contas";
+    // }
+
+    @GetMapping("/administracao")
+    public String mostrarAdministracao() {
+        return "administracao";
     }
 }
