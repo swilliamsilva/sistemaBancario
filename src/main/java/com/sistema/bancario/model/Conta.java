@@ -36,6 +36,14 @@ public class Conta {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataHoraAbertura;
 
+    public Conta() {
+        // Construtor padrão necessário para JPA
+        this.saldo = BigDecimal.ZERO;
+        this.saldoEspecial = BigDecimal.ZERO;
+        this.limiteEspecial = BigDecimal.ZERO;
+        this.situacaoConta = SituacaoConta.ATIVA;
+    }
+
     // Getters e Setters
     public Long getId() {
         return id;

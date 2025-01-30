@@ -5,9 +5,11 @@ import com.sistema.bancario.model.SituacaoConta;
 import com.sistema.bancario.repository.ContaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContaService {
@@ -105,5 +107,56 @@ public class ContaService {
         }
 
         contaRepository.save(conta);
+    }
+
+    public Conta buscarPorNumero(String numeroConta) {
+        return contaRepository.findByNumeroConta(numeroConta)
+            .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+    }
+
+    @Transactional
+    public boolean realizarSaque(String numeroConta, BigDecimal valor) {
+        return contaRepository.findByNumeroConta(numeroConta)
+            .map(conta -> {
+                if (conta.getSaldo().compareTo(valor) >= 0) {
+                    conta.setSaldo(conta.getSaldo().subtract(valor));
+                    contaRepository.save(conta);
+                    return true;
+                }
+                return false;
+            })
+            .orElse(false);
+    }
+
+    @Transactional
+    public boolean realizarDeposito(String numeroConta, BigDecimal valor) {
+        return contaRepository.findByNumeroConta(numeroConta)
+            .map(conta -> {
+                conta.setSaldo(conta.getSaldo().add(valor));
+                contaRepository.save(conta);
+                return true;
+            })
+            .orElse(false);
+    }
+
+    @Transactional
+    public boolean realizarTransferencia(String contaOrigem, String contaDestino, BigDecimal valor) {
+        Optional<Conta> contaOrigemOpt = contaRepository.findByNumeroConta(contaOrigem);
+        Optional<Conta> contaDestinoOpt = contaRepository.findByNumeroConta(contaDestino);
+
+        if (contaOrigemOpt.isPresent() && contaDestinoOpt.isPresent()) {
+            Conta origem = contaOrigemOpt.get();
+            Conta destino = contaDestinoOpt.get();
+
+            if (origem.getSaldo().compareTo(valor) >= 0) {
+                origem.setSaldo(origem.getSaldo().subtract(valor));
+                destino.setSaldo(destino.getSaldo().add(valor));
+                
+                contaRepository.save(origem);
+                contaRepository.save(destino);
+                return true;
+            }
+        }
+        return false;
     }
 }

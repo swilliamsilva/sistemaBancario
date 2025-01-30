@@ -24,10 +24,16 @@ public class Transacao {
 
     private BigDecimal valorUsadoEspecial;
 
+    private BigDecimal saldoResultante;
+
     // Getters e Setters
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Conta getConta() {
@@ -60,6 +66,14 @@ public class Transacao {
 
     public void setDataHoraTransacao(LocalDateTime dataHoraTransacao) {
         this.dataHoraTransacao = dataHoraTransacao;
+    }
+
+    public BigDecimal getSaldoResultante() {
+        return saldoResultante;
+    }
+
+    public void setSaldoResultante(BigDecimal saldoResultante) {
+        this.saldoResultante = saldoResultante;
     }
 
     public BigDecimal getValorUsadoEspecial() {

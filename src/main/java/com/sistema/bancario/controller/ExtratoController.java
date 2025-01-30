@@ -1,62 +1,69 @@
 package com.sistema.bancario.controller;
 
+import com.sistema.bancario.dto.MovimentacaoDTO;
 import com.sistema.bancario.model.Transacao;
 import com.sistema.bancario.service.TransacaoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
+@RequestMapping("/api/extrato")
+@Tag(name = "Extrato", description = "APIs para consulta de extratos")
 public class ExtratoController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExtratoController.class);
 
     @Autowired
     private TransacaoService transacaoService;
 
-    @GetMapping("/extrato")
-    public String exibirExtrato(
-            @RequestParam(value = "contaId", required = true) Long contaId,
-            @RequestParam(value = "inicio", required = false) LocalDateTime inicio,
-            @RequestParam(value = "fim", required = false) LocalDateTime fim,
-            Model model) {
+    @Operation(summary = "Consultar extrato")
+    @GetMapping("/{numeroConta}")
+    public ResponseEntity<List<MovimentacaoDTO>> consultarExtrato(
+            @Parameter(description = "Número da conta") @PathVariable String numeroConta,
+            @Parameter(description = "Data inicial") @RequestParam LocalDate dataInicial,
+            @Parameter(description = "Data final") @RequestParam LocalDate dataFinal) {
+        
+        List<Transacao> transacoes = transacaoService.buscarTransacoesPorPeriodo(
+            numeroConta, 
+            dataInicial.atStartOfDay(), 
+            dataFinal.atTime(23, 59, 59)
+        );
+        
+        List<MovimentacaoDTO> movimentacoes = transacoes.stream()
+            .map(this::converterParaDTO)
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(movimentacoes);
+    }
 
-        logger.info("Iniciando consulta de extrato. ContaId: {}", contaId);
+    @Operation(summary = "Gerar extrato PDF")
+    @GetMapping("/{numeroConta}/pdf")
+    public ResponseEntity<byte[]> gerarExtratoPDF(
+            @Parameter(description = "Número da conta") @PathVariable String numeroConta,
+            @Parameter(description = "Data inicial") @RequestParam LocalDate dataInicial,
+            @Parameter(description = "Data final") @RequestParam LocalDate dataFinal) {
+        
+        byte[] pdf = transacaoService.gerarExtratoPDF(numeroConta, dataInicial, dataFinal);
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=extrato.pdf")
+            .body(pdf);
+    }
 
-        try {
-            // Definir datas padrão, se necessário
-            if (inicio == null) {
-                inicio = LocalDateTime.now().minusMonths(1);
-                logger.debug("Data inicial não fornecida. Usando valor padrão: {}", inicio);
-            }
-            if (fim == null) {
-                fim = LocalDateTime.now();
-                logger.debug("Data final não fornecida. Usando valor padrão: {}", fim);
-            }
-
-            logger.debug("Buscando transações para a conta {} entre {} e {}", contaId, inicio, fim);
-
-            // Buscar transações e calcular total
-            List<Transacao> transacoes = transacaoService.buscarTransacoesPorPeriodo(contaId, inicio, fim);
-            BigDecimal total = transacaoService.calcularTotalTransacoes(transacoes);
-
-            model.addAttribute("transacoes", transacoes);
-            model.addAttribute("total", total);
-
-            logger.info("Consulta de extrato concluída com sucesso. Total de transações: {}", transacoes.size());
-        } catch (Exception e) {
-            logger.error("Erro ao gerar extrato para a conta {}: {}", contaId, e.getMessage(), e);
-            model.addAttribute("mensagemErro", "Erro ao gerar extrato: " + e.getMessage());
-        }
-
-        return "extrato";
+    private MovimentacaoDTO converterParaDTO(Transacao transacao) {
+        MovimentacaoDTO dto = new MovimentacaoDTO();
+        dto.setTipo(transacao.getTipoTransacao());
+        dto.setValor(transacao.getValor());
+        dto.setDataHora(transacao.getDataHoraTransacao());
+        dto.setSaldoResultante(transacao.getSaldoResultante());
+        return dto;
     }
 }

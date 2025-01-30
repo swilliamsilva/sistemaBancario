@@ -11,11 +11,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Controller
+@RequestMapping("/api/movimentacao")
+@Tag(name = "Movimentação", description = "APIs para movimentações bancárias")
 public class MovimentacaoController {
 
     private static final Logger logger = LoggerFactory.getLogger(MovimentacaoController.class);
@@ -25,6 +31,46 @@ public class MovimentacaoController {
 
     @Autowired
     private TransacaoRepository transacaoRepository;
+
+    /**
+     * Endpoint chamado pela tela de Saque (/views/saque.xhtml)
+     * Botão "Realizar Saque" aciona esta operação
+     */
+    @Operation(summary = "Realizar saque", 
+              description = "Realiza saque em conta corrente. Chamado pela tela de Saque.")
+    @PostMapping("/saque")
+    public ResponseEntity<Boolean> realizarSaque(
+            @Parameter(description = "Número da conta") @RequestParam String numeroConta,
+            @Parameter(description = "Valor do saque") @RequestParam BigDecimal valor) {
+        return ResponseEntity.ok(contaService.realizarSaque(numeroConta, valor));
+    }
+
+    /**
+     * Endpoint chamado pela tela de Depósito (/views/deposito.xhtml)
+     * Botão "Confirmar Depósito" aciona esta operação
+     */
+    @Operation(summary = "Realizar depósito", 
+              description = "Realiza depósito em conta corrente. Chamado pela tela de Depósito.")
+    @PostMapping("/deposito")
+    public ResponseEntity<Boolean> realizarDeposito(
+            @Parameter(description = "Número da conta") @RequestParam String numeroConta,
+            @Parameter(description = "Valor do depósito") @RequestParam BigDecimal valor) {
+        return ResponseEntity.ok(contaService.realizarDeposito(numeroConta, valor));
+    }
+
+    /**
+     * Endpoint chamado pela tela de Transferência (/views/transferencia.xhtml)
+     * Botão "Transferir" aciona esta operação
+     */
+    @Operation(summary = "Realizar transferência", 
+              description = "Realiza transferência entre contas. Chamado pela tela de Transferência.")
+    @PostMapping("/transferencia")
+    public ResponseEntity<Boolean> realizarTransferencia(
+            @Parameter(description = "Conta de origem") @RequestParam String contaOrigem,
+            @Parameter(description = "Conta de destino") @RequestParam String contaDestino,
+            @Parameter(description = "Valor da transferência") @RequestParam BigDecimal valor) {
+        return ResponseEntity.ok(contaService.realizarTransferencia(contaOrigem, contaDestino, valor));
+    }
 
     @PostMapping("/movimentacao")
     public String movimentar(
